@@ -11,6 +11,7 @@ const openRoom: Room = {
   name: 'Test Room 101',
   building: 'Test Building',
   capacity: 10,
+  equipment: ['Whiteboard', 'Wi-Fi'],
   blocked: false,
 };
 
@@ -19,6 +20,7 @@ const blockedRoom: Room = {
   name: 'Test Room 102',
   building: 'Test Building',
   capacity: 10,
+  equipment: ['Projector', 'Wi-Fi'],
   blocked: true,
   blockedReason: 'Maintenance — plumbing repair.',
 };

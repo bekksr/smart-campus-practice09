@@ -1,5 +1,6 @@
 import { getBookingsForRoom } from './lib/bookingSelectors';
-import { useMemo, useState } from 'react';
+import { filterRooms } from './lib/roomFilters';
+import { useEffect, useMemo, useState } from 'react';
 import {
   CalendarSearch,
   Clock4,
@@ -35,6 +36,9 @@ function App() {
   );
   const [outcome, setOutcome] = useState<CheckOutcome | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [minCapacity, setMinCapacity] = useState<number>(0);
+
+  const [requiredEquipment, setRequiredEquipment] = useState<string[]>([]);
 
   const selectedRoom: Room = useMemo(
     () => rooms.find((r) => r.id === selectedRoomId) ?? rooms[0],
@@ -45,6 +49,27 @@ function App() {
     () => getBookingsForRoom(bookings, selectedRoomId),
     [selectedRoomId]
   );
+const filteredRooms = useMemo(
+  () =>
+    filterRooms(rooms, {
+      minCapacity,
+      requiredEquipment,
+    }),
+  [minCapacity, requiredEquipment]
+);
+useEffect(() => {
+  if (filteredRooms.length === 0) return;
+
+  const selectedRoomExists = filteredRooms.some(
+    (room) => room.id === selectedRoomId
+  );
+
+  if (!selectedRoomExists) {
+    setSelectedRoomId(filteredRooms[0].id);
+    setOutcome(null);
+    setSubmitted(false);
+  }
+}, [filteredRooms, selectedRoomId]);
 
   const candidateDuration = useMemo(() => {
     const s = timeToMinutes(startTimeStr);
@@ -121,8 +146,52 @@ function App() {
                   Select a room
                 </h2>
               </div>
+              <div className="mb-4 space-y-3">
+  <label className="block">
+    <span className="mb-1 block text-sm font-medium text-slate-700">
+      Minimum capacity
+    </span>
+
+    <input
+      type="number"
+      min="0"
+      value={minCapacity}
+      onChange={(e) => setMinCapacity(Number(e.target.value))}
+      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+    />
+  </label>
+
+  <div>
+    <p className="mb-2 text-sm font-medium text-slate-700">
+      Required equipment
+    </p>
+
+    {['Projector', 'Wi-Fi', 'Computers', 'Whiteboard', 'TV', 'Microscope'].map(
+      (item) => (
+        <label key={item} className="flex items-center gap-2 text-sm text-slate-600">
+          <input
+            type="checkbox"
+            checked={requiredEquipment.includes(item)}
+            onChange={(e) => {
+              setRequiredEquipment((current) =>
+                e.target.checked
+                  ? [...current, item]
+                  : current.filter((equipment) => equipment !== item)
+              );
+            }}
+          />
+          {item}
+        </label>
+      )
+    )}
+  </div>
+
+  <p className="text-xs text-slate-500">
+    Showing {filteredRooms.length} of {rooms.length} rooms
+  </p>
+</div>
               <div className="grid grid-cols-1 gap-2.5">
-                {rooms.map((room) => (
+                {filteredRooms.map((room) => (
                   <RoomCard
                     key={room.id}
                     room={room}
