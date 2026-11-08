@@ -3,6 +3,7 @@ export interface Room {
   name: string;
   building: string;
   capacity: number;
+  equipment: string[];
   blocked: boolean;
   blockedReason?: string;
 }
@@ -21,6 +22,7 @@ export const rooms: Room[] = [
     name: 'Library Study Room 201',
     building: 'Main Library',
     capacity: 8,
+    equipment: ['Whiteboard', 'Projector', 'Wi-Fi'],
     blocked: false,
   },
   {
@@ -28,6 +30,7 @@ export const rooms: Room[] = [
     name: 'Engineering Lab 104',
     building: 'Block A — Engineering',
     capacity: 30,
+    equipment: ['Computers', 'Projector', 'Wi-Fi', 'Whiteboard'],
     blocked: false,
   },
   {
@@ -35,6 +38,7 @@ export const rooms: Room[] = [
     name: 'Science Seminar Room 310',
     building: 'Block C — Sciences',
     capacity: 20,
+    equipment:['Microscope', 'Computers', 'Projector'],
     blocked: true,
     blockedReason: 'Maintenance — HVAC repair scheduled all day.',
   },
@@ -43,6 +47,7 @@ export const rooms: Room[] = [
     name: 'Business Hub 120',
     building: 'Block B — Business',
     capacity: 12,
+    equipment: ['TV', 'Whiteboard', 'Wi-Fi'],
     blocked: false,
   },
 ];
